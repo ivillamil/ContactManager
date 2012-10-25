@@ -33,10 +33,11 @@
     var ContactView = Backbone.View.extend({
         tagName: "article",
         className: "contact-container",
-        template: _.template($("#contactTemplate").html()),
-        editTemplate: _.template($("#contactEditTemplate").html()),
+        template: Handlebars.compile($("#contactTemplate").html()),
+        editTemplate: Handlebars.compile($("#contactEditTemplate").html()),
 
         render: function () {
+            console.log(this.template);
             this.$el.html(this.template(this.model.toJSON()));
             return this;
         },
