@@ -12,7 +12,7 @@
         { name: "Contact 8", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "family" }
     ];
 
-    //define product model
+    //define contact model
     var Contact = Backbone.Model.extend({
         defaults: {
             photo: "img/placeholder.png",
