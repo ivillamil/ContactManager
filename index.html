@@ -8,16 +8,37 @@
     <head>
 
         <meta charset="UTF-8" />
-        <title>Backbone.js Web App</title>
+        <title>Backbone.js Web App</title>        
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style type="text/css">
+            body {
+                margin: 0;
+                padding: 0;
+                padding-top: 10px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
         <link rel="stylesheet" href="css/screen.css" />
-
+        
     </head>
 
     <body>
         <div id="contacts">
-            <header>
-                <div id="filter"><label>Show me:</label></div>
-                <a id="showForm" href="#">Add new contact</a>
+            <div class="container">
+                <div class="navbar navbar-inverse">
+                    <div class="navbar-inner">
+                        
+                            <a href="#" class="brand">Contacts Manager</a>
+                            <ul class="nav">
+                                <li class="dropdown" id="ddwn-filter">
+                                    <a href="" class="dropdown-toggle" data-toggle="dropdown">Show me: <b class="caret"></b></a>                            
+                                </li>                                
+                            </ul>
+                            <ul class="nav pull-right"><li><a href="#" id="showForm">Add new Contact</a></li></ul>
+                    </div>
+                </div> 
+            </div>       
+            <header>                
                 <form id="addContact" action="#">
                     <label for="photo">Photo:</label><input id="photo" type="file" />
                     <label for="name">Name:</label><input id="name" />
@@ -28,31 +49,54 @@
                     <button id="add">Add</button>
                 </form>
             </header>
+            <div class="container"><div class="contacts-list"></div></div>
         </div>
 
         <script id="contactTemplate" type="text/template">
-            <img src="{{photo}}" alt="{{name}}" width="120" />
-            <h1>{{name}}<span>{{type}}</span></h1>
-            <div>{{address}}</div>
-            <dl>
-                <dt>Tel:</dt><dd>{{tel}}</dd>
-                <dt>Email:</dt><dd><a href="mailto:{{email}}">{{email}}</a></dd>
-            </dl>
-            <button class="delete">Delete</button>
-            <button class="edit">Edit</button>
+            <div class="clearfix row-fluid">
+                <img src="{{photo}}" class="img-circle pull-left" alt="{{name}}" width="120" />
+                <div class="span7 pull-right">
+                    <h4>{{name}} <small>{{type}}</small></h4>
+                    <address>
+                        {{address}}<br>
+                        <strong>Tel:</strong> {{tel}}<br>
+                        <strong>Email:</strong> <a href="mailto:{{email}}">{{email}}</a><br>
+                    </address>
+                </div>
+            </div>
+            <!--<button class="delete btn btn-danger">Delete</button>-->
+            <!--<button class="edit btn">Edit</button>-->
+            <div class="toolbar">
+                <div class="btn-group pull-right">
+                    <a href="" class="delete btn"><i class="icon-remove"></i></a>
+                    <a href="" class="edit btn"><i class="icon-pencil"></i></a>
+                </div>
+            </div>
         </script>
 
         <script id="contactEditTemplate" type="text/template">
 
             <form action="#">
-                <input type="file" value="{{photo}}" />
-                <input class="name" value="{{name}}" />
-                <input id="type" type="hidden" value="{{type}}" />
-                <input class="address" value="{{address}}" />
-                <input class="tel" value="{{tel}}" />
-                <input class="email" value="{{email}}" />
-                <button class="save">Save</button>
-                <button class="cancel">Cancel</button>
+                <fieldset>
+                    <div class="row-fluid">
+                        <input type="file" value="{{photo}}" />
+                        <label>Name</label>
+                        <input type="text" class="name" value="{{name}}" class="span12"/>
+                        <input id="type" type="hidden" value="{{type}}" />
+                        <label>Address</label>
+                        <input type="text" class="address" value="{{address}}" class="span12"/>
+                        <label>Telephone</label>
+                        <input type="tel" class="tel" value="{{tel}}" class="span12"/>
+                        <label>Email</label>
+                        <input type="email" class="email" value="{{email}}" class="span12"/>
+                    </div>
+                    <div class="clearfix">
+                        <div class="btn-group">
+                            <button class="save btn btn-primary">Save</button>
+                            <button class="cancel btn">Cancel</button>
+                        </div>
+                    </div>
+                </fieldset>
             </form>
 
         </script>
@@ -62,6 +106,7 @@
         <script src="js/underscore-min.js"></script>
         <script src="http://cloud.github.com/downloads/wycats/handlebars.js/handlebars-1.0.0.beta.6.js"></script>
         <script src="js/backbone-min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
         <script src="js/app.js"></script>
 
     </body>

@@ -32,26 +32,26 @@
     //define individual contact view
     var ContactView = Backbone.View.extend({
         tagName: "article",
-        className: "contact-container",
+        className: "contact-wrapper",
         template: Handlebars.compile($("#contactTemplate").html()),
         editTemplate: Handlebars.compile($("#contactEditTemplate").html()),
 
         render: function () {
-            console.log(this.template);
             this.$el.html(this.template(this.model.toJSON()));
             return this;
         },
 
         events: {
-            "click button.delete": "deleteContact",
-            "click button.edit": "editContact",
+            "click a.delete": "deleteContact",
+            "click a.edit": "editContact",
             "change select.type": "addType",
             "click button.save": "saveEdits",
             "click button.cancel": "cancelEdit"
         },
 
         //delete a contact
-        deleteContact: function () {
+        deleteContact: function (e) {            
+            e.preventDefault();
             var removedType = this.model.get("type").toLowerCase();
 
             //remove model
@@ -67,7 +67,8 @@
         },
 
         //switch contact to edit mode
-        editContact: function () {
+        editContact: function (e) { 
+            e.preventDefault();           
             this.$el.html(this.editTemplate(this.model.toJSON()));
 
             //add select to set type
@@ -76,7 +77,9 @@
                 value: "addType"
             });
 
-            this.select = directory.createSelect().addClass("type").val(this.$el.find("#type").val()).append(newOpt).insertAfter(this.$el.find(".name"));
+            var lblSelect = $("<label/>", { text: "Type" }).insertAfter(this.$el.find(".name"));
+
+            this.select = directory.createSelect().addClass("type").val(this.$el.find("#type").val()).append(newOpt).insertAfter(lblSelect);
             this.$el.find("input[type='hidden']").remove();
         },
 
@@ -141,6 +144,7 @@
 
             this.render();
             this.$el.find("#filter").append(this.createSelect());
+            this.$el.find("#ddwn-filter").append(this.createDropDown());
 
             this.on("change:filterType", this.filterByType, this);
             this.collection.on("reset", this.render, this);
@@ -160,7 +164,7 @@
             var contactView = new ContactView({
                 model: item
             });
-            this.$el.append(contactView.render().el);
+            this.$el.find("div.contacts-list").append(contactView.render().el);
         },
 
         getTypes: function () {
@@ -185,16 +189,35 @@
             return select;
         },
 
+        //add the dropdownmenu from bootstrap
+        createDropDown: function () {
+            var filter = this.$el.find("#ddwn-filter"),
+                dropMenu = $("<ul/>",{
+                    html: "<li><a href='all'>All</a></li>"
+                }).addClass("dropdown-menu");
+
+            _.each(this.getTypes(), function (item) {
+                var li = $("<li/>",{
+                    html: "<a href='"+item.toLowerCase()+"'>" + item.toLowerCase() + "</a>"
+                }).appendTo(dropMenu);
+            });
+            
+            return dropMenu;
+        },
+
         //add ui events
         events: {
             "change #filter select": "setFilter",
+            "click #ddwn-filter li a": "setFilter",
             "click #add": "addContact",
             "click #showForm": "showForm"
         },
 
         //Set filter property and fire change event
         setFilter: function (e) {
-            this.filterType = e.currentTarget.value;
+            e.preventDefault();
+            //this.filterType = e.currentTarget.value;
+            this.filterType = $(e.currentTarget).attr('href');
             this.trigger("change:filterType");
         },
 
@@ -248,8 +271,6 @@
                 this.collection.add(new Contact(formData));
             }
 			
-			console.log(contacts);
-			console.log(this.collection.models);
         },
 
         removeContact: function (removedModel) {
@@ -285,6 +306,7 @@
         }
     });
 
+
     //create instance of master view
     var directory = new DirectoryView();
 
@@ -292,8 +314,15 @@
     var contactsRouter = new ContactsRouter();
 
     //start history service
-    Backbone.history.start();
+    Backbone.history.start(); 
+
+    $.getJSON('/api/contacts/lista')
+        .success(function(data){
+            contacts = data;
+            directory.render();
+        });
+    
 	
-	console.log(contacts);
+	//console.log(contacts);
 
 } (jQuery));
