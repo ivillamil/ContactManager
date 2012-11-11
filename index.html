@@ -24,7 +24,7 @@
 
     <body>
         <div id="contacts">
-            <div class="container">
+            <div class="container" role="header">
                 <div class="navbar navbar-inverse">
                     <div class="navbar-inner">
                         
@@ -34,21 +34,23 @@
                                     <a href="" class="dropdown-toggle" data-toggle="dropdown">Show me: <b class="caret"></b></a>                            
                                 </li>                                
                             </ul>
-                            <ul class="nav pull-right"><li><a href="#" id="showForm">Add new Contact</a></li></ul>
+                            <ul class="nav pull-right"><li><a href="#" data-toggle="modal" data-target="#addContact" id="showForm">Add new Contact</a></li></ul>
                     </div>
                 </div> 
-            </div>       
-            <header>                
-                <form id="addContact" action="#">
-                    <label for="photo">Photo:</label><input id="photo" type="file" />
-                    <label for="name">Name:</label><input id="name" />
-                    <label for="type">Type:</label><input id="type" />
-                    <label for="address">Address:</label><input id="address" />
-                    <label for="tel">Tel:</label><input id="tel" />
-                    <label for="email">Email:</label><input id="email" />
-                    <button id="add">Add</button>
-                </form>
-            </header>
+                <header>                
+                    <form id="addContact" action="#" class="modal hide fade well">
+                        <fieldset>
+                            <label for="photo">Photo:</label><input id="photo" type="file" />
+                            <label for="name">Name:</label><input id="name" />
+                            <label for="type">Type:</label><input id="type" />
+                            <label for="address">Address:</label><input id="address" />
+                            <label for="tel">Tel:</label><input id="tel" />
+                            <label for="email">Email:</label><input id="email" />
+                            <button id="add">Add</button>
+                        </fieldset>
+                    </form>
+                </header>
+            </div>                   
             <div class="container"><div class="contacts-list"></div></div>
         </div>
 

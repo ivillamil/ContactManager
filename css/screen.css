@@ -1,4 +1,4 @@
-﻿html{ background: url(../img/bgpattern.jpg); }
+﻿html{ background: url(../img/bgpattern.jpg); overflow-y: scroll; }
 body{ background-color: transparent; }
 
 #contacts { margin:auto; }
@@ -25,4 +25,13 @@ body{ background-color: transparent; }
 	padding: 10px;
 }
 .contact-wrapper:nth-child(2n) { margin-left: none; }
-#addContact { display: none; }
+div[role=header]{ position: relative; }
+#addContact { 
+	/*
+	display: none; 
+	position: absolute; 
+	top: 50px;
+	right: 0;
+	z-index: 4;
+	*/
+}

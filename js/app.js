@@ -1,7 +1,9 @@
 (function ($) {
 
     //demo data
+    /*
     var contacts = [
+        
         { name: "Contact 1", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "family" },
         { name: "Contact 2", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "family" },
         { name: "Contact 3", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "friend" },
@@ -10,7 +12,13 @@
         { name: "Contact 6", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "colleague" },
         { name: "Contact 7", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "friend" },
         { name: "Contact 8", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "family" }
+        
     ];
+    */
+    
+
+    Backbone.emulateHTTP = true;
+    Backbone.emulateJSON = true;
 
     //define contact model
     var Contact = Backbone.Model.extend({
@@ -21,6 +29,9 @@
             tel: "",
             email: "",
             type: ""
+        },
+        url: function() {
+            return "/api/contacts/manage/" + this.get('id');
         }
     });
 
@@ -52,13 +63,17 @@
         //delete a contact
         deleteContact: function (e) {            
             e.preventDefault();
-            var removedType = this.model.get("type").toLowerCase();
+            var self = this,
+                removedType = this.model.get("type").toLowerCase();
 
             //remove model
-            this.model.destroy();
-
-            //remove view from page
-            this.remove();
+            this.model.destroy()
+                .done(function(){
+                    self.remove();
+                })
+                .fail(function(error){
+                    alert(error.responseText);
+                });            
 
             //re-render select if no more of deleted type
             if (_.indexOf(directory.getTypes(), removedType) === -1) {
@@ -112,7 +127,7 @@
             }
 
             //update model
-            this.model.set(formData);
+            this.model.set(formData).save();
 
             //render view
             this.render();
@@ -194,9 +209,10 @@
             var filter = this.$el.find("#ddwn-filter"),
                 dropMenu = $("<ul/>",{
                     html: "<li><a href='all'>All</a></li>"
-                }).addClass("dropdown-menu");
+                }).addClass("dropdown-menu"),
+                arrTypes = _.sortBy(this.getTypes(), function(type){ return type; });
 
-            _.each(this.getTypes(), function (item) {
+            _.each(arrTypes, function (item) {
                 var li = $("<li/>",{
                     html: "<a href='"+item.toLowerCase()+"'>" + item.toLowerCase() + "</a>"
                 }).appendTo(dropMenu);
@@ -209,8 +225,8 @@
         events: {
             "change #filter select": "setFilter",
             "click #ddwn-filter li a": "setFilter",
-            "click #add": "addContact",
-            "click #showForm": "showForm"
+            "click #add": "addContact"
+            //,"click #showForm": "showForm"
         },
 
         //Set filter property and fire change event
@@ -245,15 +261,14 @@
             e.preventDefault();
 
             var formData = {};
-            $("#addContact").children("input").each(function (i, el) {
+            $("#addContact fieldset").children("input").each(function (i, el) {
 			
-				/*					
+							
                 if ($(el).val() !== "") {
                     formData[el.id] = $(el).val();
+                    $(el).val('');
                 }
-				*/
-				
-				formData[el.id] = $(el).val();
+			
             });
 			
 			if (formData.photo === "") {
@@ -261,15 +276,13 @@
 			}
 
             //update data store
-            contacts.push(formData);
+            contacts.push(formData);            
 
             //re-render select if new type is unknown
-            if (_.indexOf(this.getTypes(), formData.type) === -1) {
-                this.collection.add(new Contact(formData));
-                this.$el.find("#filter").find("select").remove().end().append(this.createSelect());
-            } else {
-                this.collection.add(new Contact(formData));
+            if (_.indexOf(this.getTypes(), formData.type) === -1) {                
+                this.$el.find("#ddwn-filter").find("ul").remove().end().append(this.createDropDown());
             }
+            this.collection.create(formData);
 			
         },
 
@@ -307,19 +320,20 @@
     });
 
 
-    //create instance of master view
-    var directory = new DirectoryView();
 
-    //create router instance
-    var contactsRouter = new ContactsRouter();
-
-    //start history service
-    Backbone.history.start(); 
+    var contacts,
+        directory, 
+        contactsRouter;
 
     $.getJSON('/api/contacts/lista')
         .success(function(data){
             contacts = data;
-            directory.render();
+            directory = new DirectoryView();
+            contactsRouter = new ContactsRouter();
+            Backbone.history.start(); 
+        })
+        .error(function(data){
+            console.log(data);
         });
     
 	

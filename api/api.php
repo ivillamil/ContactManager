@@ -38,9 +38,7 @@ Class Api extends Rest {
 
 		if(count($rquestParts) > 2)
 		{
-			array_splice($rquestParts, 0);
-			array_splice($rquestParts, 1);
-			$args = $rquestParts;
+			$args = $rquestParts[2];
 		}
 		else
 			$args = array();
@@ -52,7 +50,7 @@ Class Api extends Rest {
 		$class = new $class();
 
 		if ((int)method_exists($class, $func) > 0)
-			$class->$func();
+			$class->$func($args);
 		else
 			$this->response('',404);
 
